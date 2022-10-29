@@ -2,7 +2,6 @@ package tokens
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -44,7 +43,6 @@ func TokenGenerator(email string, First_Name string, lastname string, uid string
 	}
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SECRET_KEY))
 	if err != nil {
-		fmt.Println("error 1", err)
 		log.Panic()
 		return "", "", err
 	}
@@ -63,7 +61,6 @@ func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
 		return []byte(SECRET_KEY), nil
 	})
 	if err != nil {
-		fmt.Println("test 1")
 		msg = "token invalid"
 		msg = err.Error()
 		return
@@ -71,14 +68,12 @@ func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
 
 	claims, ok := token.Claims.(*SignedDetails)
 	if !ok {
-		fmt.Println("test 2")
 
 		msg = "the token is invalid"
 		return
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {
-		fmt.Println("test 3")
 		msg = "token is already expired"
 		return
 	}

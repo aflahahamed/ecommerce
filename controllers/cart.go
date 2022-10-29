@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -46,17 +45,8 @@ func (app *Application) AddToCart() gin.HandlerFunc {
 			_ = c.AbortWithError(http.StatusBadRequest, errors.New("user id is empty"))
 		}
 
-		// userID, err := primitive.ObjectIDFromHex(userQueryID)
-		// if err != nil {
-		// 	fmt.Println("Err 0")
-		// 	log.Println(err)
-		// 	c.AbortWithStatus(http.StatusInternalServerError)
-		// 	return
-		// }
-
 		productID, err := primitive.ObjectIDFromHex(productQueryID)
 		if err != nil {
-			fmt.Println("Err 1")
 			log.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
@@ -67,7 +57,6 @@ func (app *Application) AddToCart() gin.HandlerFunc {
 
 		err = database.AddProductToCart(ctx, productCollectiont, userCollectiont, productID, userQueryID)
 		if err != nil {
-			fmt.Println("Err 2", err)
 			log.Println(err)
 			c.IndentedJSON(http.StatusInternalServerError, err)
 			return
@@ -173,7 +162,6 @@ func (app *Application) BuyFromCart() gin.HandlerFunc {
 
 		err := database.BuyItemFromCart(ctx, userCollectiont, productCollectiont, userQueryID)
 		if err != nil {
-			fmt.Println("err 1")
 			log.Println(err)
 			c.IndentedJSON(http.StatusInternalServerError, err)
 			return
@@ -197,10 +185,8 @@ func (app *Application) InstantBuy() gin.HandlerFunc {
 			log.Println("user id is empty")
 			_ = c.AbortWithError(http.StatusBadRequest, errors.New("user id is empty"))
 		}
-		fmt.Println(userQueryID, productQueryID)
 		productID, err := primitive.ObjectIDFromHex(productQueryID)
 		if err != nil {
-			fmt.Println("err 1")
 			log.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
@@ -211,7 +197,6 @@ func (app *Application) InstantBuy() gin.HandlerFunc {
 
 		err = database.InstantBuy(ctx, productCollectiont, userCollectiont, productID, userQueryID)
 		if err != nil {
-			fmt.Println("err 2")
 			log.Println(err)
 			c.IndentedJSON(http.StatusInternalServerError, err)
 			return

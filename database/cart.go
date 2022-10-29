@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -31,20 +30,17 @@ func AddProductToCart(ctx context.Context, prodCollection *mongo.Collection, use
 		log.Println("lalala", err)
 		return ErrCantFindProduct
 	}
-	fmt.Println("prod detials from db", productcart.Price, *productcart.Image, *productcart.Product_Name)
 
 	id, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		log.Println(err)
 		return ErrUserIdIsNotValid
 	}
-	fmt.Println("idd", id)
 
 	filter := bson.D{primitive.E{Key: "_id", Value: id}}
 	update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "usercart", Value: bson.D{{Key: "$set", Value: productcart}}}}}}
 	_, err = userCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
-		fmt.Println("while pushing error")
 		return ErrCantUpdateUser
 	}
 	return nil
@@ -56,7 +52,6 @@ func RemoveCartItem(ctx context.Context, prodCollection, userCollection *mongo.C
 		log.Println(err)
 		return ErrUserIdIsNotValid
 	}
-	fmt.Println("Prod id", productID)
 
 	filter := bson.D{primitive.E{Key: "_id", Value: id}}
 	update := bson.M{"$pull": bson.M{"usercart": bson.M{"_id": productID}}}
@@ -72,7 +67,6 @@ func BuyItemFromCart(ctx context.Context, userCollection, prodCollection *mongo.
 	//fetch cart of the user
 	id, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
-		fmt.Println("err 2")
 		log.Println(err)
 		return ErrUserIdIsNotValid
 	}
@@ -89,7 +83,6 @@ func BuyItemFromCart(ctx context.Context, userCollection, prodCollection *mongo.
 
 	currentresults, err := userCollection.Aggregate(ctx, mongo.Pipeline{unwind, grouping})
 	if err != nil {
-		fmt.Println("err 3")
 		log.Panicln(err)
 	}
 	ctx.Done()
@@ -97,7 +90,6 @@ func BuyItemFromCart(ctx context.Context, userCollection, prodCollection *mongo.
 	var getusercart []bson.M
 	err = currentresults.All(ctx, &getusercart)
 	if err != nil {
-		fmt.Println("err 4")
 		log.Panicln(err)
 	}
 	var total_price int32
@@ -112,21 +104,18 @@ func BuyItemFromCart(ctx context.Context, userCollection, prodCollection *mongo.
 	update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "orders", Value: ordercart}}}}
 	_, err = userCollection.UpdateMany(ctx, filter, update)
 	if err != nil {
-		fmt.Println("err 5")
 		log.Println(err)
 	}
 
 	//adding order items to order_status field in user struct
 	err = userCollection.FindOne(ctx, bson.D{primitive.E{Key: "_id", Value: id}}).Decode(&getcartitems)
 	if err != nil {
-		fmt.Println("err 6")
 		log.Panicln(err)
 	}
 	filter2 := bson.D{primitive.E{Key: "_id", Value: id}}
 	update2 := bson.M{"$push": bson.M{"orders.$[].order_list": bson.M{"$each": getcartitems.UserCart}}}
 	_, err = userCollection.UpdateOne(ctx, filter2, update2)
 	if err != nil {
-		fmt.Println("err 7")
 		log.Println(err)
 		return err
 	}
@@ -137,7 +126,6 @@ func BuyItemFromCart(ctx context.Context, userCollection, prodCollection *mongo.
 	update3 := bson.D{{Key: "$set", Value: bson.D{primitive.E{Key: "usercart", Value: usercart_empty}}}}
 	_, err = userCollection.UpdateOne(ctx, filter3, update3)
 	if err != nil {
-		fmt.Println("err 8")
 		log.Println(err)
 		return ErrCantBuyCartItem
 	}
@@ -161,7 +149,6 @@ func InstantBuy(ctx context.Context, prodCollection, userCollection *mongo.Colle
 	orders_details.Payment_Method.COD = true
 	err = prodCollection.FindOne(ctx, bson.D{primitive.E{Key: "_id", Value: productID}}).Decode(&product_details)
 	if err != nil {
-		fmt.Println("err 3")
 		log.Println(err)
 		return ErrCantDecodeProducts
 	}
@@ -173,7 +160,6 @@ func InstantBuy(ctx context.Context, prodCollection, userCollection *mongo.Colle
 	update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "orders", Value: orders_details}}}}
 	_, err = userCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
-		fmt.Println("err 4")
 		log.Println(err)
 		return err
 	}
@@ -183,7 +169,6 @@ func InstantBuy(ctx context.Context, prodCollection, userCollection *mongo.Colle
 	update2 := bson.M{"$push": bson.M{"orders.$[].order_list": product_details}}
 	_, err = userCollection.UpdateOne(ctx, filter2, update2)
 	if err != nil {
-		fmt.Println("err 5")
 		log.Println(err)
 		return err
 	}

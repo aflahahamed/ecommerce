@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -16,11 +15,8 @@ import (
 
 func AddAddress() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println("entered address")
 		user_id := c.Query("id")
-		fmt.Println("usrr id", user_id)
 		if user_id == "" {
-			fmt.Println("err 1")
 			c.Header("Content-type", "application/json")
 			c.JSON(http.StatusNotFound, gin.H{"error": "invalid code"})
 			c.Abort()
@@ -28,7 +24,6 @@ func AddAddress() gin.HandlerFunc {
 		}
 		address, err := primitive.ObjectIDFromHex((user_id))
 		if err != nil {
-			fmt.Println("err 2")
 			log.Println(err)
 			c.IndentedJSON(500, "Internal server error")
 		}
@@ -38,12 +33,9 @@ func AddAddress() gin.HandlerFunc {
 		addresses.Address_ID = primitive.NewObjectID()
 
 		if err = c.BindJSON(&addresses); err != nil {
-			fmt.Println("err 3")
 			log.Println(err)
 			c.IndentedJSON(http.StatusNotAcceptable, err.Error())
 		}
-		fmt.Println(addresses)
-		// panic(nil)
 
 		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
@@ -53,14 +45,12 @@ func AddAddress() gin.HandlerFunc {
 
 		pointcursor, err := userCollection.Aggregate(ctx, mongo.Pipeline{match_filter, unwind, grouping})
 		if err != nil {
-			fmt.Println("err 4")
 			log.Println(err)
 			c.IndentedJSON(500, "Internal server error")
 		}
 
 		var addressInfo []bson.M
 		if err = pointcursor.All(ctx, &addressInfo); err != nil {
-			fmt.Println("err 5")
 			panic(err)
 		}
 		var size int32
@@ -72,17 +62,14 @@ func AddAddress() gin.HandlerFunc {
 		if size < 2 {
 			filter := bson.D{primitive.E{Key: "_id", Value: address}}
 			update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "address", Value: addresses}}}}
-			fmt.Println(filter, update)
 			_, err := userCollection.UpdateOne(ctx, filter, update)
 			if err != nil {
-				fmt.Println("err 6")
 				log.Println(err)
 			}
 
 		} else {
 			c.IndentedJSON(400, "Not Allowed")
 		}
-		defer cancel()
 		ctx.Done()
 
 	}
@@ -123,7 +110,6 @@ func EditHomeAddress() gin.HandlerFunc {
 			c.IndentedJSON(500, "Something went wrong")
 			return
 		}
-		defer cancel()
 		ctx.Done()
 		c.IndentedJSON(200, "Sucessfully updated home address")
 
@@ -152,7 +138,6 @@ func EditWorkAddress() gin.HandlerFunc {
 			c.IndentedJSON(http.StatusBadRequest, "Internal server error")
 			return
 		}
-		fmt.Println("houseee", *editaddress.House)
 		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
 
@@ -167,7 +152,6 @@ func EditWorkAddress() gin.HandlerFunc {
 			c.IndentedJSON(500, "Something went wrong")
 			return
 		}
-		defer cancel()
 		ctx.Done()
 		c.IndentedJSON(200, "Sucessfully updated work address")
 
@@ -201,7 +185,6 @@ func DeleteAddress() gin.HandlerFunc {
 			c.IndentedJSON(404, "wrong command")
 			return
 		}
-		defer cancel()
 		ctx.Done()
 		c.IndentedJSON(200, "Sucessfully deleted!")
 	}

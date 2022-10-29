@@ -20,6 +20,5 @@ func main() {
 	router := gin.New()
 	router.Use(gin.Logger())
 	routes.UserRoutes(router, app)
-	// router.Use(middleware.Authentication())
 	log.Fatal(router.Run(":" + port))
 }

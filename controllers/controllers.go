@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -117,7 +116,7 @@ func Login() gin.HandlerFunc {
 		defer cancel()
 		if !PasswordIsValid {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Login or password incorrrect"})
-			fmt.Println(msg)
+			log.Println(msg)
 			return
 		}
 		signedToken, refreshToken, err := token.TokenGenerator(*foundUser.Email, *foundUser.First_Name, *foundUser.Last_Name, foundUser.User_ID)
@@ -187,7 +186,6 @@ func SearchProductByQuery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var searchProducts []models.Product
 		queryParam := c.Query("name")
-		fmt.Println("test match", queryParam)
 
 		if queryParam == "" {
 			log.Println("query is empty")
@@ -205,7 +203,6 @@ func SearchProductByQuery() gin.HandlerFunc {
 			return
 		}
 		err = searchQueryDb.All(ctx, &searchProducts)
-		fmt.Println("result", searchProducts)
 		if err != nil {
 			log.Println(err)
 			c.IndentedJSON(400, "invalid")
