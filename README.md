@@ -67,52 +67,52 @@ The code is written using the following packages:
   URL:`http://localhost:8000/users/search?name=asus`
 
 - Add to cart (Get request)
-  URL:`http://localhost:8000/addtocart?id=6345ba523cacbf5b04ebde4c&userID=63445d653066839ebb492085`
+  URL:`http://localhost:8000/addtocart?id=xxx_product_idxxx&userID=xxxuser_idxxx`
 
 \*Remove from cart (Get request)
-URL:`http://localhost:8000/removeitem?id=63446135e8156f9f963eecbc&userID=63445d653066839ebb492085`
+URL:`http://localhost:8000/removeitem?id=xxx_product_idxxx&userID=xxxuser_idxxx`
 
 - Add adress (Post request)
-  URL:`http://localhost:8000/addaddress?id=63445d653066839ebb492085`
+  URL:`http://localhost:8000/addaddress?id=xxxuser_idxxx`
 
 ```
 {
 "house_name": "black house",
-"street_name": "black street",
+"street_name": "8th cross street",
 "city_name": "mangalore",
 "pin_code": "54564186"
 }
 ```
 
 - Edit work address (Put request)
-  URL:`http://localhost:8000/editworkaddress?id=63445d653066839ebb492085`
+  URL:`http://localhost:8000/editworkaddress?id=xxxuser_idxxx`
 
 ```
 {
 "house_name": "blue house",
-"street_name": "lol street",
-"city_name": "lalalla",
+"street_name": "Bakers street",
+"city_name": "udupi",
 "pin_code": "58568"
 }
 ```
 
 - Edit Home address (Put request)
-  URL:`http://localhost:8000/editworkaddress?id=63445d653066839ebb492085`
+  URL:`http://localhost:8000/editworkaddress?id=xxxuser_idxxx`
 
 ```
 {
-"house_name": "blue house",
-"street_name": "lol street",
-"city_name": "lalalla",
+"house_name": "White house",
+"street_name": "MG street",
+"city_name": "Bangalore",
 "pin_code": "58568"
 }
 ```
 
 - Delete both address (Get request)
-  URL:`http://localhost:8000/deleteaddresses?id=63445d653066839ebb492085`
+  URL:`http://localhost:8000/deleteaddresses?id=xxxuser_idxxx`
 
 - Cart checkout (Get request)
-  URL:`http://localhost:8000/cartcheckout?id=63445d653066839ebb492085`
+  URL:`http://localhost:8000/cartcheckout?id=xxxuser_idxxx`
 
 - Instant checkout (Getrequest)
-  URL:`http://localhost:8000/instantbuy?userID=63445d653066839ebb492085&id=6345ba523cacbf5b04ebde4c`
+  URL:`http://localhost:8000/instantbuy?userID=xxxuser_idxxx&id=xxx_product_idxxx`
