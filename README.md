@@ -23,7 +23,7 @@ The code is written using the following packages:
   This will run the Program in `8000` port
 - use Postman app to test the commands with the required payloads
 
-# Endpoints
+## Endpoints
 
 - Sign Up (Post request)
   URL: `http://localhost:8000/users/signup`
@@ -48,7 +48,7 @@ The code is written using the following packages:
 }
 ```
 
-- Add Product (POst Request)
+- Add Product (Post Request)
   URL:`http://localhost:8000/admin/addproduct`
 
 ```
