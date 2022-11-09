@@ -27,7 +27,7 @@ func AddProductToCart(ctx context.Context, prodCollection *mongo.Collection, use
 	var productcart models.ProductUser
 	err := prodCollection.FindOne(ctx, bson.M{"_id": productID}).Decode(&productcart)
 	if err != nil {
-		log.Println("lalala", err)
+		log.Println(err)
 		return ErrCantFindProduct
 	}
 

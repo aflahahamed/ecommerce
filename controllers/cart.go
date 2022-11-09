@@ -16,17 +16,14 @@ import (
 )
 
 type Application struct {
-	prodCollection *mongo.Collection
-	userCollection *mongo.Collection
+	ProdCollection *mongo.Collection
+	UserCollection *mongo.Collection
 }
-
-var userCollectiont *mongo.Collection = database.UserData(database.Client, "Users")
-var productCollectiont *mongo.Collection = database.ProductData(database.Client, "Product")
 
 func NewApplication(prodCollection, userCollection *mongo.Collection) *Application {
 	return &Application{
-		prodCollection: prodCollection,
-		userCollection: userCollection,
+		ProdCollection: prodCollection,
+		UserCollection: userCollection,
 	}
 }
 
@@ -55,7 +52,7 @@ func (app *Application) AddToCart() gin.HandlerFunc {
 		var ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		err = database.AddProductToCart(ctx, productCollectiont, userCollectiont, productID, userQueryID)
+		err = database.AddProductToCart(ctx, app.ProdCollection, app.UserCollection, productID, userQueryID)
 		if err != nil {
 			log.Println(err)
 			c.IndentedJSON(http.StatusInternalServerError, err)
@@ -91,7 +88,7 @@ func (app *Application) RemoveItem() gin.HandlerFunc {
 		var ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		err = database.RemoveCartItem(ctx, productCollectiont, userCollectiont, productID, userQueryID)
+		err = database.RemoveCartItem(ctx, app.ProdCollection, app.UserCollection, productID, userQueryID)
 		if err != nil {
 			log.Println(err)
 			c.IndentedJSON(http.StatusInternalServerError, err)
@@ -160,7 +157,7 @@ func (app *Application) BuyFromCart() gin.HandlerFunc {
 		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
 
-		err := database.BuyItemFromCart(ctx, userCollectiont, productCollectiont, userQueryID)
+		err := database.BuyItemFromCart(ctx, app.UserCollection, app.ProdCollection, userQueryID)
 		if err != nil {
 			log.Println(err)
 			c.IndentedJSON(http.StatusInternalServerError, err)
@@ -195,7 +192,7 @@ func (app *Application) InstantBuy() gin.HandlerFunc {
 		var ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		err = database.InstantBuy(ctx, productCollectiont, userCollectiont, productID, userQueryID)
+		err = database.InstantBuy(ctx, app.ProdCollection, app.UserCollection, productID, userQueryID)
 		if err != nil {
 			log.Println(err)
 			c.IndentedJSON(http.StatusInternalServerError, err)
